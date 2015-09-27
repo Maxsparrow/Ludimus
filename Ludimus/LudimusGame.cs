@@ -52,7 +52,7 @@ namespace Ludimus
             UIBoard.Initialize(1, UIColorList.Length, 40, 40, new Point(0, 0), graphics);
             for(int i=0; i < UIColorList.Length; i++)
             {
-                UIBoard.SetColor(new Point(0, i), UIColorList[i]);
+                UIBoard.SetColor(i, UIColorList[i]);
             }
 
             PlayButton = new GameButton();
@@ -106,23 +106,32 @@ namespace Ludimus
             // Check if play mode started
             if (PlayButton.CheckMousePosition(CurrentMousePosition) && CurrentMouseState.LeftButton == ButtonState.Pressed)
             {
-                GameBoard.PlayMode = true;
+                GameBoard.EnablePlayMode();
                 System.Console.WriteLine("Play Mode Started");
             } else if (StopButton.CheckMousePosition(CurrentMousePosition) && CurrentMouseState.LeftButton == ButtonState.Pressed)
             {
-                GameBoard.PlayMode = false;
+                GameBoard.DisablePlayMode();
                 System.Console.WriteLine("Play Mode Stopped");
             }
 
-            Point selectedUITilePosition = UIBoard.FindSelectedTile(CurrentMousePosition);
-            Point selectedBoardTilePosition = GameBoard.FindSelectedTile(CurrentMousePosition);
-            if (selectedUITilePosition != default(Point) && CurrentMouseState.LeftButton == ButtonState.Pressed)
+            // Select new colors
+            if (!GameBoard.PlayMode)
             {
-                SelectedColor = UIBoard.SelectNewColor(selectedUITilePosition);
-                System.Console.WriteLine("Selected new color: " + SelectedColor.ToString());
-            } else if (selectedBoardTilePosition != default(Point) && CurrentMouseState.LeftButton == ButtonState.Pressed)
+                Tile selectedUITile = UIBoard.FindSelectedTile(CurrentMousePosition);
+                Tile selectedBoardTile = GameBoard.FindSelectedTile(CurrentMousePosition);
+                if (selectedUITile != null && CurrentMouseState.LeftButton == ButtonState.Pressed)
+                {
+                    SelectedColor = selectedUITile.RectColor;
+                    System.Console.WriteLine("Selected new color: " + SelectedColor.ToString());
+                }
+                else if (selectedBoardTile != null && CurrentMouseState.LeftButton == ButtonState.Pressed)
+                {
+                    GameBoard.ActivateTile(selectedBoardTile.RectCoords, SelectedColor);
+                }
+            }
+            else if (GameBoard.PlayMode)
             {
-                GameBoard.ActivateTile(selectedBoardTilePosition, SelectedColor);
+                GameBoard.Update();
             }
 
             base.Update(gameTime);

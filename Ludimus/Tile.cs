@@ -22,13 +22,16 @@ namespace Ludimus
             }
         }
 
-        private Color _defaultColor = Color.Ivory;
-        public Color DefaultColor { get { return _defaultColor; } }
+        private static Color _defaultColor = Color.Ivory;
+        public static Color DefaultColor { get { return _defaultColor; } }
+
+        private static int _defaultBorderWidth = 1;
+        public static int DefaultBorderWidth { get { return _defaultBorderWidth; } }
 
         public Color BorderColor { get; set; }
         public int BorderWidth { get; set; }
 
-        private Rectangle RectCoords;
+        public Rectangle RectCoords { get; set; }
         private Texture2D BorderTexture;
         private Texture2D RectTexture;
 
@@ -64,6 +67,15 @@ namespace Ludimus
             spriteBatch.Draw(BorderTexture, RectCoords, Color.White);
             Rectangle innerRectangle = new Rectangle(RectCoords.X + BorderWidth, RectCoords.Y + BorderWidth, RectCoords.Width - BorderWidth * 2, RectCoords.Height - BorderWidth * 2);
             spriteBatch.Draw(RectTexture, innerRectangle, Color.White);
+        }
+
+        public void DisableBorders()
+        {
+            BorderWidth = 0;
+        }
+        public void EnableBorders()
+        {
+            BorderWidth = DefaultBorderWidth;
         }
 
         public bool CheckMousePosition(Point mousePosition)
