@@ -15,7 +15,7 @@ namespace Ludimus
         Board GameBoard;
         Board UIBoard;
         Color[] UIColorList;
-        Color SelectedColor;
+        Color SelectedColor = Tile.DefaultColor;
         MouseState CurrentMouseState;
         Point CurrentMousePosition;
         GameButton PlayButton;
@@ -24,6 +24,8 @@ namespace Ludimus
         public LudimusGame()
         {
             graphics = new GraphicsDeviceManager(this);
+            this.graphics.PreferredBackBufferWidth = 800;
+            this.graphics.PreferredBackBufferHeight = 600;
             Content.RootDirectory = "Content";
         }
 
@@ -40,12 +42,12 @@ namespace Ludimus
             CurrentMousePosition = new Point(CurrentMouseState.X, CurrentMouseState.Y);
 
             GameBoard = new Board();
-            GameBoard.Initialize(20, 12, 30, 30, new Point(100, 50), graphics);
+            GameBoard.Initialize(20, 16, 30, 30, new Point(100, 50), graphics);
 
-            UIColorList = new Color[] { Color.Blue, Color.Aqua, Color.LightSkyBlue,
+            UIColorList = new Color[] { Color.Purple, Color.Blue, Color.Aqua, Color.LightSkyBlue,
                                         Color.LightSeaGreen, Color.ForestGreen, Color.LightGreen,
-                                       Color.Red, Color.Gold, Color.Orange, Color.HotPink,
-                                       Color.Black, Color.Ivory};
+                                        Color.Red, Color.Gold, Color.Orange, Color.Brown,
+                                        Color.HotPink, Color.Black, Color.Ivory};
             System.Console.WriteLine(UIColorList.Length);
 
             UIBoard = new Board();
@@ -104,11 +106,11 @@ namespace Ludimus
                 Exit();
 
             // Check if play mode started
-            if (PlayButton.CheckMousePosition(CurrentMousePosition) && CurrentMouseState.LeftButton == ButtonState.Pressed)
+            if (PlayButton.CheckMousePosition(CurrentMousePosition) && CurrentMouseState.LeftButton == ButtonState.Pressed && !GameBoard.PlayMode)
             {
                 GameBoard.EnablePlayMode();
                 System.Console.WriteLine("Play Mode Started");
-            } else if (StopButton.CheckMousePosition(CurrentMousePosition) && CurrentMouseState.LeftButton == ButtonState.Pressed)
+            } else if (StopButton.CheckMousePosition(CurrentMousePosition) && CurrentMouseState.LeftButton == ButtonState.Pressed && GameBoard.PlayMode)
             {
                 GameBoard.DisablePlayMode();
                 System.Console.WriteLine("Play Mode Stopped");

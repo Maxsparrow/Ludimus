@@ -8,25 +8,34 @@ namespace Ludimus
     class Actor
     {
         public List<Tile> Tiles;
+        public float Velocity { get; set; }
 
-        public Actor(Rectangle rectCoords, GraphicsDeviceManager graphics, Color color)
+        public void AddTile(Rectangle rectCoords, GraphicsDeviceManager graphics, Color color)
         {
-            Tiles = new List<Tile>();
             Tile tileToAdd = new Tile();
             tileToAdd.Initialize(rectCoords, graphics, color);
             Tiles.Add(tileToAdd);
         }
         
-        public void Initialize()
+        public Actor()
         {
+            Tiles = new List<Tile>();
+            Velocity = 1;
         }
 
-        public void Move(float speed)
+        public void Move(Rectangle boardRectCoords)
         {
-            foreach(Tile tile in Tiles)
+            foreach (Tile tile in Tiles)
+            {
+                if (!boardRectCoords.Contains(tile.RectCoords))
+                {
+                    Velocity = -Velocity;
+                }
+            }
+            foreach (Tile tile in Tiles)
             {
                 Rectangle currentRect = tile.RectCoords;
-                tile.RectCoords = new Rectangle(currentRect.X + (int)speed, currentRect.Y, currentRect.Width, currentRect.Height);
+                tile.RectCoords = new Rectangle(currentRect.X + (int)Velocity, currentRect.Y, currentRect.Width, currentRect.Height);
             }
         }
 
@@ -43,6 +52,18 @@ namespace Ludimus
             foreach(Tile tile in Tiles)
             {
                 if (tile.CheckMousePosition(mousePosition))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool CheckIfNeighboring(Rectangle rectCoords)
+        {
+            foreach (Tile tile in Tiles)
+            {
+                if (tile.CheckIfNeighboring(rectCoords))
                 {
                     return true;
                 }

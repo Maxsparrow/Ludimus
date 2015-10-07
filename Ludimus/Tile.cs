@@ -82,5 +82,17 @@ namespace Ludimus
         {
             return RectCoords.Contains(mousePosition) ? true : false;
         }
+
+        public bool CheckIfNeighboring(Rectangle rectCoords)
+        {
+            if (CheckMousePosition(new Point(rectCoords.X - rectCoords.Width, rectCoords.Y)) ||
+                CheckMousePosition(new Point(rectCoords.X, rectCoords.Y - rectCoords.Height)) ||
+                CheckMousePosition(new Point(rectCoords.X + rectCoords.Width, rectCoords.Y)) ||
+                CheckMousePosition(new Point(rectCoords.X, rectCoords.Y + rectCoords.Height)))
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

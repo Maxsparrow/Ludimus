@@ -17,6 +17,9 @@ namespace Ludimus
         private int TileHeight;
         private GraphicsDeviceManager Graphics;
 
+        private Rectangle _boardRectCoords;
+        public Rectangle BoardRectCoords { get { return _boardRectCoords; } }
+
         public void Initialize(int boardWidth, int boardHeight, int tileWidth, int tileHeight, Point startlocation, GraphicsDeviceManager graphics)
         {
             StartLocation = startlocation;
@@ -47,6 +50,7 @@ namespace Ludimus
                 tile.DisableBorders();
             }
         }
+
         public void DisablePlayMode()
         {
             PlayMode = false;
@@ -58,9 +62,10 @@ namespace Ludimus
 
         public void Update()
         {
+            FindBoardRectCoords();
             foreach(Actor actor in Actors)
             {
-                actor.Move(1);
+                actor.Move(BoardRectCoords);
             }
         }
 
@@ -94,14 +99,38 @@ namespace Ludimus
             return null;
         }
 
-        public void ActivateTile(Rectangle rectCoords, Color newColor)
+        public bool ActivateTile(Rectangle rectCoords, Color newColor)
         {
             if (newColor != Tile.DefaultColor)
             {
-                Actors.Add(new Actor(rectCoords, Graphics, newColor));
+                // Remove any existing Actors, before adding new one
+                /*
+
+                for (int i = 0; i < Actors.Count; i++)
+                {
+                    if (Actors[i].CheckMousePosition(new Point(rectCoords.X, rectCoords.Y)))
+                    {
+                        Actors.Remove(Actors[i]);
+                    }
+                }*/
+
+                // Check if a neighboring tile already has an Actor
+                for (int i = 0; i < Actors.Count; i++)
+                {
+                    if (Actors[i].CheckIfNeighboring(rectCoords))
+                    {
+                        Actors[i].AddTile(rectCoords, Graphics, newColor);
+                        return true;
+                    }
+                }
+                Actor actorToAdd = new Actor();
+                actorToAdd.AddTile(rectCoords, Graphics, newColor);
+                Actors.Add(actorToAdd);
+                return true;
             }
             else if(newColor == Tile.DefaultColor)
             {
+                //If default base color, remove existing Actors
                 for (int i = 0; i < Actors.Count; i++)
                 {
                     if (Actors[i].CheckMousePosition(new Point(rectCoords.X, rectCoords.Y)))
@@ -109,7 +138,34 @@ namespace Ludimus
                         Actors.Remove(Actors[i]);
                     }
                 }
+                return false;
             }
+            return false;
+        }
+
+        private void FindBoardRectCoords()
+        {
+            int maxX = 0;
+            int maxY = 0;
+            int minX = 99999;
+            int minY = 99999;
+            int tileWidth = 0;
+            int tileHeight = 0;
+            foreach (Tile tile in BoardTiles)
+            {
+                if (tile.RectCoords.X > maxX)
+                    maxX = tile.RectCoords.X;
+                    tileWidth = tile.RectCoords.Width;
+                    tileHeight = tile.RectCoords.Height;
+                if (tile.RectCoords.X < minX)
+                    minX = tile.RectCoords.X;
+                if (tile.RectCoords.Y > maxY)
+                    maxY = tile.RectCoords.Y;
+                if (tile.RectCoords.Y < minY)
+                    minY = tile.RectCoords.Y;
+            }
+
+            _boardRectCoords = new Rectangle(minX, minY, maxX - minX + tileWidth, maxY - minY + tileHeight);
         }
 
     }
