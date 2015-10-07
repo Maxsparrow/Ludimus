@@ -32,7 +32,8 @@ namespace Ludimus
         public int BorderWidth { get; set; }
 
         public Point BoardPosition { get; set; }
-        public Rectangle RectCoords { get; set; }
+        public Rectangle CurrentRectCoords { get; set; }
+        public Rectangle OriginalRectCoords { get; set; }
         private Texture2D BorderTexture;
         private Texture2D RectTexture;
 
@@ -62,13 +63,14 @@ namespace Ludimus
             BorderTexture = new Texture2D(graphics.GraphicsDevice, 1, 1);
             BorderTexture.SetData(new[] { BorderColor });
             
-            RectCoords = coords;
+            CurrentRectCoords = coords;
+            OriginalRectCoords = CurrentRectCoords;
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(BorderTexture, RectCoords, Color.White);
-            Rectangle innerRectangle = new Rectangle(RectCoords.X + BorderWidth, RectCoords.Y + BorderWidth, RectCoords.Width - BorderWidth * 2, RectCoords.Height - BorderWidth * 2);
+            spriteBatch.Draw(BorderTexture, CurrentRectCoords, Color.White);
+            Rectangle innerRectangle = new Rectangle(CurrentRectCoords.X + BorderWidth, CurrentRectCoords.Y + BorderWidth, CurrentRectCoords.Width - BorderWidth * 2, CurrentRectCoords.Height - BorderWidth * 2);
             spriteBatch.Draw(RectTexture, innerRectangle, Color.White);
         }
 
@@ -83,7 +85,7 @@ namespace Ludimus
 
         public bool CheckMousePosition(Point mousePosition)
         {
-            return RectCoords.Contains(mousePosition) ? true : false;
+            return CurrentRectCoords.Contains(mousePosition) ? true : false;
         }
 
         public bool CheckIfNeighboring(Rectangle rectCoords)

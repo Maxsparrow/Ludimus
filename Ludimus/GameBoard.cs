@@ -70,6 +70,15 @@ namespace Ludimus
             {
                 tile.EnableBorders();
             }
+
+            // Move all ActiveTiles back to the original position
+            foreach (Tile activeTile in ActiveTiles)
+            {
+                activeTile.CurrentRectCoords = activeTile.OriginalRectCoords;
+            }
+
+            // Destroy actors, will reset them at EnablePlayMode
+            ResetActors();
         }
 
         public void Update()
@@ -157,7 +166,7 @@ namespace Ludimus
 
                 //Add a new active tile
                 Tile tileToAdd = new Tile();
-                tileToAdd.Initialize(selectedBoardTile.RectCoords, Graphics, newTileColor);
+                tileToAdd.Initialize(selectedBoardTile.CurrentRectCoords, Graphics, newTileColor);
                 tileToAdd.BoardPosition = selectedBoardTile.BoardPosition;
                 ActiveTiles.Add(tileToAdd);
             }
@@ -231,6 +240,15 @@ namespace Ludimus
             }
         }
 
+        public void ResetActors()
+        {
+            foreach (Tile tile in ActiveTiles)
+            {
+                tile.BaseActor = null;
+            }
+            Actors = new List<Actor>();
+        }
+
         public List<Tile> FindNeighboringTiles(Tile tileToCheck)
         {
             List<Tile> neighboringTiles = new List<Tile>();
@@ -257,16 +275,16 @@ namespace Ludimus
             int tileHeight = 0;
             foreach (Tile tile in BoardTiles)
             {
-                if (tile.RectCoords.X > maxX)
-                    maxX = tile.RectCoords.X;
-                    tileWidth = tile.RectCoords.Width;
-                    tileHeight = tile.RectCoords.Height;
-                if (tile.RectCoords.X < minX)
-                    minX = tile.RectCoords.X;
-                if (tile.RectCoords.Y > maxY)
-                    maxY = tile.RectCoords.Y;
-                if (tile.RectCoords.Y < minY)
-                    minY = tile.RectCoords.Y;
+                if (tile.CurrentRectCoords.X > maxX)
+                    maxX = tile.CurrentRectCoords.X;
+                    tileWidth = tile.CurrentRectCoords.Width;
+                    tileHeight = tile.CurrentRectCoords.Height;
+                if (tile.CurrentRectCoords.X < minX)
+                    minX = tile.CurrentRectCoords.X;
+                if (tile.CurrentRectCoords.Y > maxY)
+                    maxY = tile.CurrentRectCoords.Y;
+                if (tile.CurrentRectCoords.Y < minY)
+                    minY = tile.CurrentRectCoords.Y;
             }
 
             _boardRectCoords = new Rectangle(minX, minY, maxX - minX + tileWidth, maxY - minY + tileHeight);

@@ -29,15 +29,15 @@ namespace Ludimus
         {
             foreach (Tile tile in Tiles)
             {
-                if (!boardRectCoords.Contains(tile.RectCoords))
+                if (!boardRectCoords.Contains(tile.CurrentRectCoords))
                 {
-                    if(tile.RectCoords.X + tile.RectCoords.Width > boardRectCoords.X + boardRectCoords.Width ||
-                       tile.RectCoords.X < boardRectCoords.X)
+                    if(tile.CurrentRectCoords.X + tile.CurrentRectCoords.Width > boardRectCoords.X + boardRectCoords.Width ||
+                       tile.CurrentRectCoords.X < boardRectCoords.X)
                     {
                         _velocity.X = -_velocity.X;
                         break;
-                    } else if (tile.RectCoords.Y + tile.RectCoords.Height > boardRectCoords.Y + boardRectCoords.Height ||
-                        tile.RectCoords.Y < boardRectCoords.Y)
+                    } else if (tile.CurrentRectCoords.Y + tile.CurrentRectCoords.Height > boardRectCoords.Y + boardRectCoords.Height ||
+                        tile.CurrentRectCoords.Y < boardRectCoords.Y)
                     {
                         _velocity.Y = -_velocity.Y;
                         break;
@@ -46,8 +46,8 @@ namespace Ludimus
             }
             foreach (Tile tile in Tiles)
             {
-                Rectangle currentRect = tile.RectCoords;
-                tile.RectCoords = new Rectangle(currentRect.X + (int)Velocity.X, currentRect.Y + (int)Velocity.Y, currentRect.Width, currentRect.Height);
+                Rectangle currentRect = tile.CurrentRectCoords;
+                tile.CurrentRectCoords = new Rectangle(currentRect.X + (int)Velocity.X, currentRect.Y + (int)Velocity.Y, currentRect.Width, currentRect.Height);
             }
         }
 

@@ -19,6 +19,7 @@ namespace Ludimus
         Point CurrentMousePosition;
         GameButton PlayButton;
         GameButton StopButton;
+        List<TileType> TileTypes;
 
         public Color SelectedColor = Tile.DefaultColor;
 
@@ -45,11 +46,16 @@ namespace Ludimus
             GameBoardMain = new GameBoard(this);
             GameBoardMain.Initialize(20, 16, 30, 30, new Point(100, 50), graphics);
 
+            //TODO: Add support for different tile types. Not sure if this is best way, or should 
+            //use a dictionary to lookup 
+            //TileTypes = new List<TileType>();
+            //TileTypes.Add(new TileType(Color.LightGreen, "Bouncer"));
+
             UIColorList = new Color[] { Color.Purple, Color.Blue, Color.Aqua, Color.LightSkyBlue,
                                         Color.LightSeaGreen, Color.ForestGreen, Color.LightGreen,
                                         Color.Red, Color.Gold, Color.Orange, Color.Brown,
                                         Color.HotPink, Color.Black, Color.Ivory};
-            System.Console.WriteLine(UIColorList.Length);
+                                        
 
             UIBoardColors = new UIBoard(this);
             UIBoardColors.Initialize(1, UIColorList.Length, 40, 40, new Point(0, 0), graphics);
