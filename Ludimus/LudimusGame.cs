@@ -12,20 +12,21 @@ namespace Ludimus
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Board GameBoard;
-        Board UIBoard;
+        GameBoard GameBoardMain;
+        UIBoard UIBoardColors;
         Color[] UIColorList;
-        Color SelectedColor = Tile.DefaultColor;
         MouseState CurrentMouseState;
         Point CurrentMousePosition;
         GameButton PlayButton;
         GameButton StopButton;
 
+        public Color SelectedColor = Tile.DefaultColor;
+
         public LudimusGame()
         {
             graphics = new GraphicsDeviceManager(this);
-            this.graphics.PreferredBackBufferWidth = 800;
-            this.graphics.PreferredBackBufferHeight = 600;
+            graphics.PreferredBackBufferWidth = 800;
+            graphics.PreferredBackBufferHeight = 600;
             Content.RootDirectory = "Content";
         }
 
@@ -41,8 +42,8 @@ namespace Ludimus
             CurrentMouseState = Mouse.GetState();
             CurrentMousePosition = new Point(CurrentMouseState.X, CurrentMouseState.Y);
 
-            GameBoard = new Board();
-            GameBoard.Initialize(20, 16, 30, 30, new Point(100, 50), graphics);
+            GameBoardMain = new GameBoard(this);
+            GameBoardMain.Initialize(20, 16, 30, 30, new Point(100, 50), graphics);
 
             UIColorList = new Color[] { Color.Purple, Color.Blue, Color.Aqua, Color.LightSkyBlue,
                                         Color.LightSeaGreen, Color.ForestGreen, Color.LightGreen,
@@ -50,11 +51,11 @@ namespace Ludimus
                                         Color.HotPink, Color.Black, Color.Ivory};
             System.Console.WriteLine(UIColorList.Length);
 
-            UIBoard = new Board();
-            UIBoard.Initialize(1, UIColorList.Length, 40, 40, new Point(0, 0), graphics);
+            UIBoardColors = new UIBoard(this);
+            UIBoardColors.Initialize(1, UIColorList.Length, 40, 40, new Point(0, 0), graphics);
             for(int i=0; i < UIColorList.Length; i++)
             {
-                UIBoard.SetColor(i, UIColorList[i]);
+                UIBoardColors.SetColor(i, UIColorList[i]);
             }
 
             PlayButton = new GameButton();
@@ -106,35 +107,18 @@ namespace Ludimus
                 Exit();
 
             // Check if play mode started
-            if (PlayButton.CheckMousePosition(CurrentMousePosition) && CurrentMouseState.LeftButton == ButtonState.Pressed && !GameBoard.PlayMode)
+            if (PlayButton.CheckMousePosition(CurrentMousePosition) && CurrentMouseState.LeftButton == ButtonState.Pressed && !GameBoardMain.PlayMode)
             {
-                GameBoard.EnablePlayMode();
+                GameBoardMain.EnablePlayMode();
                 System.Console.WriteLine("Play Mode Started");
-            } else if (StopButton.CheckMousePosition(CurrentMousePosition) && CurrentMouseState.LeftButton == ButtonState.Pressed && GameBoard.PlayMode)
+            } else if (StopButton.CheckMousePosition(CurrentMousePosition) && CurrentMouseState.LeftButton == ButtonState.Pressed && GameBoardMain.PlayMode)
             {
-                GameBoard.DisablePlayMode();
+                GameBoardMain.DisablePlayMode();
                 System.Console.WriteLine("Play Mode Stopped");
             }
 
-            // Select new colors
-            if (!GameBoard.PlayMode)
-            {
-                Tile selectedUITile = UIBoard.FindSelectedTile(CurrentMousePosition);
-                Tile selectedBoardTile = GameBoard.FindSelectedTile(CurrentMousePosition);
-                if (selectedUITile != null && CurrentMouseState.LeftButton == ButtonState.Pressed)
-                {
-                    SelectedColor = selectedUITile.RectColor;
-                    System.Console.WriteLine("Selected new color: " + SelectedColor.ToString());
-                }
-                else if (selectedBoardTile != null && CurrentMouseState.LeftButton == ButtonState.Pressed)
-                {
-                    GameBoard.ActivateTile(selectedBoardTile.RectCoords, SelectedColor);
-                }
-            }
-            else if (GameBoard.PlayMode)
-            {
-                GameBoard.Update();
-            }
+            UIBoardColors.Update();
+            GameBoardMain.Update();
 
             base.Update(gameTime);
         }
@@ -150,12 +134,12 @@ namespace Ludimus
             // TODO: Add your drawing code here
             this.spriteBatch.Begin();
 
-            UIBoard.Draw(spriteBatch);
+            UIBoardColors.Draw(spriteBatch);
 
             PlayButton.Draw(spriteBatch);
             StopButton.Draw(spriteBatch);
 
-            GameBoard.Draw(spriteBatch);
+            GameBoardMain.Draw(spriteBatch);
 
             this.spriteBatch.End();
 

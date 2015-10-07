@@ -8,34 +8,46 @@ namespace Ludimus
     class Actor
     {
         public List<Tile> Tiles;
-        public float Velocity { get; set; }
+        private Vector2 _velocity;
+        public Vector2 Velocity {
+            get { return _velocity; }
+            set { _velocity = value; }
+        }
 
-        public void AddTile(Rectangle rectCoords, GraphicsDeviceManager graphics, Color color)
+        public void AddTile(Tile tile)
         {
-            Tile tileToAdd = new Tile();
-            tileToAdd.Initialize(rectCoords, graphics, color);
-            Tiles.Add(tileToAdd);
+            tile.BaseActor = this;
+            Tiles.Add(tile);
         }
         
         public Actor()
         {
             Tiles = new List<Tile>();
-            Velocity = 1;
         }
 
-        public void Move(Rectangle boardRectCoords)
+        public void BounceMove(Rectangle boardRectCoords)
         {
             foreach (Tile tile in Tiles)
             {
                 if (!boardRectCoords.Contains(tile.RectCoords))
                 {
-                    Velocity = -Velocity;
+                    if(tile.RectCoords.X + tile.RectCoords.Width > boardRectCoords.X + boardRectCoords.Width ||
+                       tile.RectCoords.X < boardRectCoords.X)
+                    {
+                        _velocity.X = -_velocity.X;
+                        break;
+                    } else if (tile.RectCoords.Y + tile.RectCoords.Height > boardRectCoords.Y + boardRectCoords.Height ||
+                        tile.RectCoords.Y < boardRectCoords.Y)
+                    {
+                        _velocity.Y = -_velocity.Y;
+                        break;
+                    }
                 }
             }
             foreach (Tile tile in Tiles)
             {
                 Rectangle currentRect = tile.RectCoords;
-                tile.RectCoords = new Rectangle(currentRect.X + (int)Velocity, currentRect.Y, currentRect.Width, currentRect.Height);
+                tile.RectCoords = new Rectangle(currentRect.X + (int)Velocity.X, currentRect.Y + (int)Velocity.Y, currentRect.Width, currentRect.Height);
             }
         }
 

@@ -31,11 +31,14 @@ namespace Ludimus
         public Color BorderColor { get; set; }
         public int BorderWidth { get; set; }
 
+        public Point BoardPosition { get; set; }
         public Rectangle RectCoords { get; set; }
         private Texture2D BorderTexture;
         private Texture2D RectTexture;
 
         private GraphicsDeviceManager graphics;
+
+        public Actor BaseActor { get; set; }
 
         public void Initialize(Rectangle coords, GraphicsDeviceManager graphicsManager, Color color = default(Color))
         {

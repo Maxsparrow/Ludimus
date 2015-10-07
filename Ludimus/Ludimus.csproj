@@ -39,7 +39,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Actor.cs" />
-    <Compile Include="Board.cs" />
+    <Compile Include="UIBoard.cs" />
+    <Compile Include="GameBoard.cs" />
     <Compile Include="Tile.cs" />
     <Compile Include="LudimusGame.cs" />
     <Compile Include="GameButton.cs" />
