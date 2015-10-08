@@ -20,9 +20,8 @@ namespace Ludimus
         private int TileWidth;
         private int TileHeight;
         private GraphicsDeviceManager Graphics;
-
-        private Rectangle _boardRectCoords;
-        public Rectangle BoardRectCoords { get { return _boardRectCoords; } }
+        
+        public Rectangle BoardRectCoords { get { return FindBoardRectCoords(); } }
 
         public GameBoard(LudimusGame baseGame)
         {
@@ -91,7 +90,7 @@ namespace Ludimus
                 FindBoardRectCoords();
                 foreach (Actor actor in Actors)
                 {
-                    actor.BounceMove(BoardRectCoords);
+                    actor.Update();
                 }
             }
             else if (!PlayMode)
@@ -166,6 +165,14 @@ namespace Ludimus
 
                 //Add a new active tile
                 Tile tileToAdd = new Tile();
+                if (BaseGame.TileTypeLookup.ContainsKey(newTileColor))
+                {
+                    tileToAdd = (Tile)Activator.CreateInstance(BaseGame.TileTypeLookup[newTileColor]);
+                } else
+                {
+                    tileToAdd = new Tile();
+                }
+
                 tileToAdd.Initialize(selectedBoardTile.CurrentRectCoords, Graphics, newTileColor);
                 tileToAdd.BoardPosition = selectedBoardTile.BoardPosition;
                 ActiveTiles.Add(tileToAdd);
@@ -229,19 +236,11 @@ namespace Ludimus
                                 noTilesToAdd = true;
                         }
                     }
+                    actorToAdd.SetMovementType();
+                    actorToAdd.BaseGameBoard = this;
 
                     Actors.Add(actorToAdd);
                 }
-            }
-
-            //Give random starting velocity for all actors
-            Random rnd1 = new Random();
-            foreach (Actor actor in Actors)
-            {
-                Vector2 velocity = new Vector2();
-                velocity.X = rnd1.Next(-5, 5);
-                velocity.Y = rnd1.Next(-5, 5);
-                actor.Velocity = velocity;
             }
         }
 
@@ -270,7 +269,7 @@ namespace Ludimus
             return neighboringTiles;
         }
 
-        private void FindBoardRectCoords()
+        private Rectangle FindBoardRectCoords()
         {
             int maxX = 0;
             int maxY = 0;
@@ -292,7 +291,7 @@ namespace Ludimus
                     minY = tile.CurrentRectCoords.Y;
             }
 
-            _boardRectCoords = new Rectangle(minX, minY, maxX - minX + tileWidth, maxY - minY + tileHeight);
+            return new Rectangle(minX, minY, maxX - minX + tileWidth, maxY - minY + tileHeight);
         }
 
     }
