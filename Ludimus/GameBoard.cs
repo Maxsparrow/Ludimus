@@ -186,6 +186,11 @@ namespace Ludimus
             }
         }
 
+        public void EraseAll()
+        {
+            ActiveTiles = new List<Tile>();
+        }
+
         public void SetActors()
         {
             //Find tiles neighboring each tile, and add them to Actors

@@ -19,6 +19,7 @@ namespace Ludimus
         Point CurrentMousePosition;
         GameButton PlayButton;
         GameButton StopButton;
+        GameButton EraseButton;
         List<TileType> TileTypes;
 
         public Color SelectedColor = Tile.DefaultColor;
@@ -66,6 +67,7 @@ namespace Ludimus
 
             PlayButton = new GameButton();
             StopButton = new GameButton();
+            EraseButton = new GameButton();
 
             base.Initialize();
         }
@@ -79,7 +81,6 @@ namespace Ludimus
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-
             // TODO: use this.Content to load your game content here
             Point playButtonPosition = new Point(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2 - 50,
                 GraphicsDevice.Viewport.TitleSafeArea.Y);
@@ -88,6 +89,10 @@ namespace Ludimus
             Point stopButtonPosition = new Point(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2 - 10,
                 GraphicsDevice.Viewport.TitleSafeArea.Y);
             StopButton.Initialize(Content.Load<Texture2D>("Graphics\\StopButton"), stopButtonPosition, new Vector2(0.4f, 0.4f));
+            
+            Point eraseButtonPosition = new Point(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 8,
+                GraphicsDevice.Viewport.TitleSafeArea.Y);
+            EraseButton.Initialize(Content.Load<Texture2D>("Graphics\\EraseButton"), eraseButtonPosition, new Vector2(0.4f, 0.4f));
         }
 
         /// <summary>
@@ -123,6 +128,13 @@ namespace Ludimus
                 System.Console.WriteLine("Play Mode Stopped");
             }
 
+            // Check if Erase Button pushed
+            if (EraseButton.CheckMousePosition(CurrentMousePosition) && CurrentMouseState.LeftButton == ButtonState.Pressed && !GameBoardMain.PlayMode)
+            {
+                GameBoardMain.EraseAll();
+                System.Console.WriteLine("Board Erased");
+            }
+
             UIBoardColors.Update();
             GameBoardMain.Update();
 
@@ -144,6 +156,7 @@ namespace Ludimus
 
             PlayButton.Draw(spriteBatch);
             StopButton.Draw(spriteBatch);
+            EraseButton.Draw(spriteBatch);
 
             GameBoardMain.Draw(spriteBatch);
 
