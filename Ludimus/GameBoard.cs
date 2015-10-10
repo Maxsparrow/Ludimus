@@ -47,7 +47,7 @@ namespace Ludimus
                 for (int y = 0; y < BoardHeight; y++)
                 {
                     Tile tileToAdd = new Tile();
-                    tileToAdd.Initialize(new Rectangle(StartLocation.X + TileWidth * x, StartLocation.Y + TileHeight * y, TileWidth, TileHeight), graphics);
+                    tileToAdd.Initialize(new Point(StartLocation.X + TileWidth * x, StartLocation.Y + TileHeight * y), new Point(TileWidth, TileHeight), graphics);
                     tileToAdd.BoardPosition = new Point(x, y);
                     BoardTiles.Add(tileToAdd);
                 }
@@ -75,7 +75,7 @@ namespace Ludimus
             // Move all ActiveTiles back to the original position
             foreach (Tile activeTile in ActiveTiles)
             {
-                activeTile.CurrentRectCoords = activeTile.OriginalRectCoords;
+                activeTile.CurrentGlobalPosition = activeTile.OriginalGlobalPosition;
             }
 
             // Destroy actors, will reset them at EnablePlayMode
@@ -175,7 +175,7 @@ namespace Ludimus
                     tileToAdd.Type = TileType.Basic;
                 }
 
-                tileToAdd.Initialize(selectedBoardTile.CurrentRectCoords, Graphics, newTileColor);
+                tileToAdd.Initialize(selectedBoardTile.CurrentGlobalPosition, selectedBoardTile.Size, Graphics, newTileColor);
                 tileToAdd.BoardPosition = selectedBoardTile.BoardPosition;
                 ActiveTiles.Add(tileToAdd);
             }

@@ -42,13 +42,13 @@ namespace Ludimus
             {
                 if (!BaseGameBoard.BoardRectCoords.Contains(tile.CurrentRectCoords))
                 {
-                    if(tile.CurrentRectCoords.X + tile.CurrentRectCoords.Width > BaseGameBoard.BoardRectCoords.X + BaseGameBoard.BoardRectCoords.Width ||
-                       tile.CurrentRectCoords.X < BaseGameBoard.BoardRectCoords.X)
+                    if(tile.CurrentGlobalPosition.X + tile.Size.X > BaseGameBoard.BoardRectCoords.X + BaseGameBoard.BoardRectCoords.Width ||
+                       tile.CurrentGlobalPosition.X < BaseGameBoard.BoardRectCoords.X)
                     {
                         _velocity.X = -_velocity.X;
                         break;
-                    } else if (tile.CurrentRectCoords.Y + tile.CurrentRectCoords.Height > BaseGameBoard.BoardRectCoords.Y + BaseGameBoard.BoardRectCoords.Height ||
-                        tile.CurrentRectCoords.Y < BaseGameBoard.BoardRectCoords.Y)
+                    } else if (tile.CurrentGlobalPosition.Y + tile.Size.Y > BaseGameBoard.BoardRectCoords.Y + BaseGameBoard.BoardRectCoords.Height ||
+                        tile.CurrentGlobalPosition.Y < BaseGameBoard.BoardRectCoords.Y)
                     {
                         _velocity.Y = -_velocity.Y;
                         break;
@@ -58,7 +58,8 @@ namespace Ludimus
             foreach (Tile tile in Tiles)
             {
                 Rectangle currentRect = tile.CurrentRectCoords;
-                tile.CurrentRectCoords = new Rectangle(currentRect.X + (int)Velocity.X, currentRect.Y + (int)Velocity.Y, currentRect.Width, currentRect.Height);
+                Point currentGlobalPosition = tile.CurrentGlobalPosition;
+                tile.CurrentGlobalPosition = new Point(currentGlobalPosition.X + (int)Velocity.X, currentGlobalPosition.Y + (int)Velocity.Y);
             }
         }
 

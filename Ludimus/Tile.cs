@@ -32,8 +32,22 @@ namespace Ludimus
         public int BorderWidth { get; set; }
 
         public Point BoardPosition { get; set; }
-        public Rectangle CurrentRectCoords { get; set; }
-        public Rectangle OriginalRectCoords { get; set; }
+        public Point OriginalGlobalPosition { get; set; }
+        public Point CurrentGlobalPosition { get; set; }
+        public Point Size { get; set; }
+        public Rectangle CurrentRectCoords
+        {
+            get
+            {
+                return new Rectangle(CurrentGlobalPosition, Size);
+            }
+            set
+            {
+                CurrentGlobalPosition = new Point(value.X, value.Y);
+                Size = new Point(value.Width, value.Height);
+            }
+        }
+        
         private Texture2D BorderTexture;
         private Texture2D RectTexture;
 
@@ -42,7 +56,7 @@ namespace Ludimus
         public Actor BaseActor { get; set; }
         public TileType Type { get; set; }
 
-        public void Initialize(Rectangle coords, GraphicsDeviceManager graphicsManager, Color color = default(Color))
+        public void Initialize(Point position, Point size, GraphicsDeviceManager graphicsManager, Color color = default(Color))
         {
             // Set default Border settings
             BorderColor = Color.Black;
@@ -63,9 +77,10 @@ namespace Ludimus
             // Create border rectangle texture
             BorderTexture = new Texture2D(graphics.GraphicsDevice, 1, 1);
             BorderTexture.SetData(new[] { BorderColor });
-            
-            CurrentRectCoords = coords;
-            OriginalRectCoords = CurrentRectCoords;
+
+            CurrentGlobalPosition = position;
+            OriginalGlobalPosition = CurrentGlobalPosition;
+            Size = size;
         }
 
         public void Draw(SpriteBatch spriteBatch)

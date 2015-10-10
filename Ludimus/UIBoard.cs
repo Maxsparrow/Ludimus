@@ -38,7 +38,7 @@ namespace Ludimus
                 for (int y = 0; y < BoardHeight; y++)
                 {
                     Tile tileToAdd = new Tile();
-                    tileToAdd.Initialize(new Rectangle(StartLocation.X + TileWidth * x, StartLocation.Y + TileHeight * y, TileWidth, TileHeight), graphics);
+                    tileToAdd.Initialize(new Point(StartLocation.X + TileWidth * x, StartLocation.Y + TileHeight * y), new Point(TileWidth, TileHeight), graphics);
                     BoardTiles.Add(tileToAdd);
                 }
             }
