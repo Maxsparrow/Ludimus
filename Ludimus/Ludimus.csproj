@@ -39,8 +39,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Actor.cs" />
-    <Compile Include="TileBasic.cs" />
-    <Compile Include="TileBouncer.cs" />
+    <Compile Include="Enums.cs" />
     <Compile Include="UIBoard.cs" />
     <Compile Include="GameBoard.cs" />
     <Compile Include="Tile.cs" />

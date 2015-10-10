@@ -21,7 +21,7 @@ namespace Ludimus
         GameButton PlayButton;
         GameButton StopButton;
         GameButton EraseButton;
-        public Dictionary<Color, Type> TileTypeLookup;
+        public Dictionary<Color, Enum> TileTypeLookup;
 
         public Color SelectedColor = Tile.DefaultColor;
 
@@ -53,9 +53,9 @@ namespace Ludimus
                                         Color.Red, Color.Gold, Color.Orange, Color.Brown,
                                         Color.HotPink, Color.Black, Color.Ivory};
 
-            TileTypeLookup = new Dictionary<Color, Type>()
+            TileTypeLookup = new Dictionary<Color, Enum>()
             {
-                { Color.LightGreen, typeof(TileBouncer) }
+                { Color.LightGreen, TileType.Bouncer }
             };
 
             UIBoardColors = new UIBoard(this);

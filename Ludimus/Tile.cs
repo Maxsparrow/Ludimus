@@ -40,6 +40,7 @@ namespace Ludimus
         private GraphicsDeviceManager graphics;
 
         public Actor BaseActor { get; set; }
+        public TileType Type { get; set; }
 
         public void Initialize(Rectangle coords, GraphicsDeviceManager graphicsManager, Color color = default(Color))
         {

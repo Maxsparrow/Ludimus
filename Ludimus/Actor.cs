@@ -17,10 +17,18 @@ namespace Ludimus
         }
         public string MovementType;
 
-        public void AddTile(Tile tile)
+        public bool AddTile(Tile tile)
         {
-            tile.BaseActor = this;
-            Tiles.Add(tile);
+            if (!Tiles.Contains(tile))
+            {
+                tile.BaseActor = this;
+                Tiles.Add(tile);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
         
         public Actor()
@@ -63,12 +71,11 @@ namespace Ludimus
                 // Check for conflicts, or rather have override hierarchy
 
                 //Give random starting velocity for all actors
-                if (tile is TileBouncer)
+                if (tile.Type == TileType.Bouncer)
                 {
                     MovementType = "Bouncer";
-                    Random rnd1 = new Random();
-                    _velocity.X = rnd1.Next(-5, 5);
-                    _velocity.Y = rnd1.Next(-5, 5);
+                    _velocity.X = GameBoard.RandomGenerator.Next(-5, 5);
+                    _velocity.Y = GameBoard.RandomGenerator.Next(-5, 5);
                     break;
                 }
             }

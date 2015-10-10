@@ -20,8 +20,10 @@ namespace Ludimus
         private int TileWidth;
         private int TileHeight;
         private GraphicsDeviceManager Graphics;
-        
+
         public Rectangle BoardRectCoords { get { return FindBoardRectCoords(); } }
+        public static Random RandomGenerator = new Random();
+
 
         public GameBoard(LudimusGame baseGame)
         {
@@ -167,10 +169,10 @@ namespace Ludimus
                 Tile tileToAdd = new Tile();
                 if (BaseGame.TileTypeLookup.ContainsKey(newTileColor))
                 {
-                    tileToAdd = (Tile)Activator.CreateInstance(BaseGame.TileTypeLookup[newTileColor]);
+                    tileToAdd.Type = (TileType)BaseGame.TileTypeLookup[newTileColor];
                 } else
                 {
-                    tileToAdd = new Tile();
+                    tileToAdd.Type = TileType.Basic;
                 }
 
                 tileToAdd.Initialize(selectedBoardTile.CurrentRectCoords, Graphics, newTileColor);
@@ -226,11 +228,8 @@ namespace Ludimus
                             bool addedAnyTile = false;
                             foreach (Tile tile in neighboringTiles)
                             {
-                                if (!actorToAdd.Tiles.Contains(tile))
-                                {
-                                    actorToAdd.AddTile(tile);
+                                if (actorToAdd.AddTile(tile))
                                     addedAnyTile = true;
-                                }
                             }
                             if (!addedAnyTile)
                                 noTilesToAdd = true;
