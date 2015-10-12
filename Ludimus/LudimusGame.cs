@@ -34,7 +34,8 @@ namespace Ludimus
         public static readonly Dictionary<Tuple<ActorMovementType, ActorMovementType>, Enum> ActorCollisionLookup =
             new Dictionary<Tuple<ActorMovementType, ActorMovementType>, Enum>()
             {
-                    { new Tuple<ActorMovementType, ActorMovementType>( ActorMovementType.Bouncer, ActorMovementType.Basic ), ActorCollisionType.Bounce }
+                    { new Tuple<ActorMovementType, ActorMovementType>( ActorMovementType.Bouncer, ActorMovementType.Basic ), ActorCollisionType.Bounce },
+                     { new Tuple<ActorMovementType, ActorMovementType>( ActorMovementType.Bouncer, ActorMovementType.Bouncer ), ActorCollisionType.BounceBoth }
             };
 
         public LudimusGame()

@@ -21,5 +21,6 @@ public enum ActorMovementType
 public enum ActorCollisionType
 {
     Bounce,
+    BounceBoth,
     Stop
 }

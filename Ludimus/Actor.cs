@@ -45,11 +45,13 @@ namespace Ludimus
                     if(tile.CurrentGlobalPosition.X + tile.Size.X > BaseGameBoard.BoardRectCoords.X + BaseGameBoard.BoardRectCoords.Width ||
                        tile.CurrentGlobalPosition.X < BaseGameBoard.BoardRectCoords.X)
                     {
+                        Backup();
                         _velocity.X = -_velocity.X;
                         break;
                     } else if (tile.CurrentGlobalPosition.Y + tile.Size.Y > BaseGameBoard.BoardRectCoords.Y + BaseGameBoard.BoardRectCoords.Height ||
                         tile.CurrentGlobalPosition.Y < BaseGameBoard.BoardRectCoords.Y)
                     {
+                        Backup();
                         _velocity.Y = -_velocity.Y;
                         break;
                     }
@@ -86,17 +88,15 @@ namespace Ludimus
                 _velocity.Y *= -1;
             else
             {
-                // Multiplying by different numbers here to prevent infinite bounce loops
-                // TODO: Try to improve this logic as it can lead to unexpected bounce results
-                _velocity.X = (int)(_velocity.X * -0.5f);
-                _velocity.Y = (int)(_velocity.Y * -1.5f);
+                // Without multiplying these by different numbers, can get caught in infinite bounce loop in static environments
+                _velocity.X *= -1;
+                _velocity.Y *= -1;
             }
 
             // Prevent stopping or stuck tiles by randomly adding a positive or negative small velocity 
             if (_velocity.X == 0)
             {
                 int rand = GameBoard.RandomGenerator.Next(0, 1);
-                System.Console.WriteLine(rand);
                 if (rand == 0)
                     _velocity.X += 1;
                 else

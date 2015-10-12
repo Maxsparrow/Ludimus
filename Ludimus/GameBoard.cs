@@ -142,6 +142,13 @@ namespace Ludimus
                                 collisionHandled = true;
                                 break;
                             }
+                            if (actorCollisionType == ActorCollisionType.BounceBoth)
+                            {
+                                tile1.BaseActor.Bounce(tile1, tile2);
+                                tile2.BaseActor.Bounce(tile2, tile1);
+                                collisionHandled = true;
+                                break;
+                            }
                         }
 
                         System.Console.WriteLine("Colliding! " + tile1.Type + " hit " + tile2.Type);
