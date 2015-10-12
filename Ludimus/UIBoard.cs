@@ -52,8 +52,9 @@ namespace Ludimus
             Tile selectedUITile = FindSelectedTile(currentMousePosition);
             if (selectedUITile != null && currentMouseState.LeftButton == ButtonState.Pressed)
             {
-                BaseGame.SelectedColor = selectedUITile.RectColor;
-                System.Console.WriteLine("Selected new color: " + BaseGame.SelectedColor.ToString());
+                BaseGame.SelectedTileType = selectedUITile.Type;
+                System.Console.WriteLine("Selected new color: " + LudimusGame.TileTypeLookup[BaseGame.SelectedTileType].ToString());
+                System.Console.WriteLine("Selected tile type: " + BaseGame.SelectedTileType.ToString());
             }
         }
 
@@ -65,9 +66,10 @@ namespace Ludimus
             }
         }
 
-        public void SetColor(int tileNumber, Color color)
+        public void SetType(int tileNumber, TileType tileType)
         {
-            BoardTiles[tileNumber].RectColor = color;
+            BoardTiles[tileNumber].Type = tileType;
+            BoardTiles[tileNumber].RectColor = LudimusGame.TileTypeLookup[tileType];
         }
         
         public Tile FindSelectedTile(Point mousePosition)

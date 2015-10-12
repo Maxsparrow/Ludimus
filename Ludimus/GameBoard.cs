@@ -94,6 +94,7 @@ namespace Ludimus
                 {
                     actor.Update();
                 }
+                HandleCollisions();
             }
             else if (!PlayMode)
             {
@@ -101,8 +102,54 @@ namespace Ludimus
                 Tile selectedBoardTile = FindSelectedTile(currentMousePosition);
                 if (selectedBoardTile != null && currentMouseState.LeftButton == ButtonState.Pressed)
                 {
-                    ActivateTile(selectedBoardTile, BaseGame.SelectedColor);
+                    ActivateTile(selectedBoardTile, BaseGame.SelectedTileType);
                 }
+            }
+        }
+
+        public void HandleCollisions()
+        {
+            foreach (Actor actor1 in Actors)
+            {
+                foreach (Actor actor2 in Actors)
+                {
+                    if (actor1 != actor2)
+                    {
+                        CheckForCollision(actor1, actor2);
+                    }
+                }
+            }
+        }
+
+        public void CheckForCollision(Actor actor1, Actor actor2)
+        {
+            bool collisionHandled = false;
+            foreach(Tile tile1 in actor1.Tiles)
+            {
+                foreach(Tile tile2 in actor2.Tiles)
+                {
+                    if (tile1.CurrentRectCoords.Intersects(tile2.CurrentRectCoords))
+                    {
+                        Tuple<ActorMovementType, ActorMovementType> actorMovementTuple = new Tuple<ActorMovementType, ActorMovementType>(tile1.BaseActor.MovementType, tile2.BaseActor.MovementType);
+
+                        if (LudimusGame.ActorCollisionLookup.ContainsKey(actorMovementTuple))
+                        {
+                            ActorCollisionType actorCollisionType = (ActorCollisionType)LudimusGame.ActorCollisionLookup[actorMovementTuple];
+                            System.Console.WriteLine("Found collision Type: " + actorCollisionType.ToString());
+                            if (actorCollisionType == ActorCollisionType.Bounce)
+                            {
+                                tile1.BaseActor.Bounce(tile1, tile2);
+                                collisionHandled = true;
+                                break;
+                            }
+                        }
+
+                        System.Console.WriteLine("Colliding! " + tile1.Type + " hit " + tile2.Type);
+                        System.Console.WriteLine("Colliding Actors! " + actor1.MovementType + " hit " + actor2.MovementType);
+                    }
+                }
+                if (collisionHandled)
+                    break;
             }
         }
 
@@ -147,9 +194,9 @@ namespace Ludimus
             return null;
         }
 
-        public void ActivateTile(Tile selectedBoardTile, Color newTileColor)
+        public void ActivateTile(Tile selectedBoardTile, TileType newTileType)
         {
-            if (newTileColor != Tile.DefaultColor)
+            if (newTileType != TileType.Background)
             {
                 //Remove any existing tiles
                 Tile tileToRemove = null;
@@ -167,19 +214,15 @@ namespace Ludimus
 
                 //Add a new active tile
                 Tile tileToAdd = new Tile();
-                if (BaseGame.TileTypeLookup.ContainsKey(newTileColor))
+                if (LudimusGame.TileTypeLookup.ContainsKey(newTileType))
                 {
-                    tileToAdd.Type = (TileType)BaseGame.TileTypeLookup[newTileColor];
-                } else
-                {
-                    tileToAdd.Type = TileType.Basic;
-                }
-
-                tileToAdd.Initialize(selectedBoardTile.CurrentGlobalPosition, selectedBoardTile.Size, Graphics, newTileColor);
+                    tileToAdd.Type = newTileType;
+                } 
+                tileToAdd.Initialize(selectedBoardTile.CurrentGlobalPosition, selectedBoardTile.Size, Graphics, LudimusGame.TileTypeLookup[newTileType]);
                 tileToAdd.BoardPosition = selectedBoardTile.BoardPosition;
                 ActiveTiles.Add(tileToAdd);
             }
-            else if(newTileColor == Tile.DefaultColor)
+            else if(newTileType == TileType.Background)
             {
                 //Remove any current active tile at this position
                 Tile tileToRemove = null;
@@ -219,6 +262,7 @@ namespace Ludimus
                         {
                             neighboringTiles.AddRange(FindNeighboringTiles(tile));
                         }
+
                         if (neighboringTiles.Count == 0)
                         {
                             noTilesToAdd = true;

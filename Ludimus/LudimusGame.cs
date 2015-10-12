@@ -15,15 +15,27 @@ namespace Ludimus
         SpriteBatch spriteBatch;
         GameBoard GameBoardMain;
         UIBoard UIBoardColors;
-        Color[] UIColorList;
         MouseState CurrentMouseState;
         Point CurrentMousePosition;
         GameButton PlayButton;
         GameButton StopButton;
         GameButton EraseButton;
-        public Dictionary<Color, Enum> TileTypeLookup;
 
-        public Color SelectedColor = Tile.DefaultColor;
+        public TileType SelectedTileType = TileType.Background;
+
+        public static readonly Dictionary<Enum, Color> TileTypeLookup =
+            new Dictionary<Enum, Color>()
+            {
+                { TileType.Background, Color.Ivory },
+                { TileType.Basic, Color.Gray },
+                { TileType.Bouncer, Color.LightGreen }
+            };
+
+        public static readonly Dictionary<Tuple<ActorMovementType, ActorMovementType>, Enum> ActorCollisionLookup =
+            new Dictionary<Tuple<ActorMovementType, ActorMovementType>, Enum>()
+            {
+                    { new Tuple<ActorMovementType, ActorMovementType>( ActorMovementType.Bouncer, ActorMovementType.Basic ), ActorCollisionType.Bounce }
+            };
 
         public LudimusGame()
         {
@@ -48,21 +60,13 @@ namespace Ludimus
             GameBoardMain = new GameBoard(this);
             GameBoardMain.Initialize(20, 16, 30, 30, new Point(100, 50), graphics);
             
-            UIColorList = new Color[] { Color.Purple, Color.Blue, Color.Aqua, Color.LightSkyBlue,
-                                        Color.LightSeaGreen, Color.ForestGreen, Color.LightGreen,
-                                        Color.Red, Color.Gold, Color.Orange, Color.Brown,
-                                        Color.HotPink, Color.Black, Color.Ivory};
-
-            TileTypeLookup = new Dictionary<Color, Enum>()
-            {
-                { Color.LightGreen, TileType.Bouncer }
-            };
+            TileType[] tileTypes = (TileType[])Enum.GetValues(typeof(TileType));
 
             UIBoardColors = new UIBoard(this);
-            UIBoardColors.Initialize(1, UIColorList.Length, 40, 40, new Point(0, 0), graphics);
-            for(int i=0; i < UIColorList.Length; i++)
+            UIBoardColors.Initialize(1, tileTypes.Length, 40, 40, new Point(0, 0), graphics);
+            for(int i=0; i < tileTypes.Length; i++)
             {
-                UIBoardColors.SetColor(i, UIColorList[i]);
+                UIBoardColors.SetType(i, tileTypes[i]);
             }
 
             PlayButton = new GameButton();

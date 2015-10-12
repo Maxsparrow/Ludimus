@@ -33,7 +33,20 @@ namespace Ludimus
 
         public Point BoardPosition { get; set; }
         public Point OriginalGlobalPosition { get; set; }
-        public Point CurrentGlobalPosition { get; set; }
+        private Point _currentGlobalPosition;
+        public Point CurrentGlobalPosition
+        {
+            get
+            {
+                return _currentGlobalPosition;
+            }
+            set
+            {
+                LastGlobalPosition = _currentGlobalPosition;
+                _currentGlobalPosition = value;
+            }
+        }
+        public Point LastGlobalPosition { get; set; }
         public Point Size { get; set; }
         public Rectangle CurrentRectCoords
         {
@@ -47,7 +60,14 @@ namespace Ludimus
                 Size = new Point(value.Width, value.Height);
             }
         }
-        
+        public Rectangle LastRectCoords
+        {
+            get
+            {
+                return new Rectangle(LastGlobalPosition, Size);
+            }
+        }
+
         private Texture2D BorderTexture;
         private Texture2D RectTexture;
 

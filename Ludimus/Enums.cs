@@ -1,14 +1,25 @@
-﻿enum TileType
+﻿public enum TileType
+{
+    Background,
+    Basic,
+    Bouncer
+}
+
+public enum TileCollisionType
+{
+    DestroySelf,
+    DestroyOther,
+    DestroyBoth
+}
+
+public enum ActorMovementType
 {
     Basic,
     Bouncer
 }
 
-enum CollisionType
+public enum ActorCollisionType
 {
-    Stop,
     Bounce,
-    DestroySelf,
-    DestroyOther,
-    DestroyBoth
+    Stop
 }

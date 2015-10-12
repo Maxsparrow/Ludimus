@@ -10,12 +10,12 @@ namespace Ludimus
         public GameBoard BaseGameBoard { get; set; }
 
         public List<Tile> Tiles;
-        private Vector2 _velocity;
-        public Vector2 Velocity {
+        private Point _velocity;
+        public Point Velocity {
             get { return _velocity; }
             set { _velocity = value; }
         }
-        public string MovementType;
+        public ActorMovementType MovementType;
 
         public bool AddTile(Tile tile)
         {
@@ -55,11 +55,60 @@ namespace Ludimus
                     }
                 }
             }
+
             foreach (Tile tile in Tiles)
             {
-                Rectangle currentRect = tile.CurrentRectCoords;
-                Point currentGlobalPosition = tile.CurrentGlobalPosition;
-                tile.CurrentGlobalPosition = new Point(currentGlobalPosition.X + (int)Velocity.X, currentGlobalPosition.Y + (int)Velocity.Y);
+                tile.CurrentGlobalPosition = new Point(tile.CurrentGlobalPosition.X + (int)Velocity.X, tile.CurrentGlobalPosition.Y + (int)Velocity.Y);
+            }
+        }
+
+        // When colliding with another tile, reverse movement by one step
+        public void Backup()
+        {
+            foreach (Tile tile in Tiles)
+            {
+                tile.CurrentGlobalPosition = new Point(tile.CurrentGlobalPosition.X - (int)Velocity.X, tile.CurrentGlobalPosition.Y - (int)Velocity.Y);
+            }
+        }
+
+        public void Bounce(Tile selfTile, Tile otherTile)
+        {
+            Backup();
+
+            // Logic to decide when to switch directions
+            if ((otherTile.CurrentRectCoords.X >= selfTile.CurrentRectCoords.X + selfTile.CurrentRectCoords.Width ||
+                otherTile.CurrentRectCoords.X + otherTile.CurrentRectCoords.Width <= selfTile.CurrentRectCoords.X) && !(otherTile.CurrentRectCoords.Y >= selfTile.CurrentRectCoords.Y + selfTile.CurrentRectCoords.Height ||
+                otherTile.CurrentRectCoords.Y + otherTile.CurrentRectCoords.Height <= selfTile.CurrentRectCoords.Y))
+                _velocity.X *= -1;
+            else if ((otherTile.CurrentRectCoords.Y >= selfTile.CurrentRectCoords.Y + selfTile.CurrentRectCoords.Height ||
+                otherTile.CurrentRectCoords.Y + otherTile.CurrentRectCoords.Height <= selfTile.CurrentRectCoords.Y) && !(otherTile.CurrentRectCoords.X >= selfTile.CurrentRectCoords.X + selfTile.CurrentRectCoords.Width ||
+                otherTile.CurrentRectCoords.X + otherTile.CurrentRectCoords.Width <= selfTile.CurrentRectCoords.X))
+                _velocity.Y *= -1;
+            else
+            {
+                // Multiplying by different numbers here to prevent infinite bounce loops
+                // TODO: Try to improve this logic as it can lead to unexpected bounce results
+                _velocity.X = (int)(_velocity.X * -0.5f);
+                _velocity.Y = (int)(_velocity.Y * -1.5f);
+            }
+
+            // Prevent stopping or stuck tiles by randomly adding a positive or negative small velocity 
+            if (_velocity.X == 0)
+            {
+                int rand = GameBoard.RandomGenerator.Next(0, 1);
+                System.Console.WriteLine(rand);
+                if (rand == 0)
+                    _velocity.X += 1;
+                else
+                    _velocity.X -= 1;
+            }
+            if (_velocity.Y == 0)
+            {
+                int rand = GameBoard.RandomGenerator.Next(0, 1);
+                if (rand == 0)
+                    _velocity.Y += 1;
+                else
+                    _velocity.Y -= 1;
             }
         }
 
@@ -74,10 +123,13 @@ namespace Ludimus
                 //Give random starting velocity for all actors
                 if (tile.Type == TileType.Bouncer)
                 {
-                    MovementType = "Bouncer";
+                    MovementType = ActorMovementType.Bouncer;
                     _velocity.X = GameBoard.RandomGenerator.Next(-5, 5);
                     _velocity.Y = GameBoard.RandomGenerator.Next(-5, 5);
                     break;
+                } else
+                {
+                    MovementType = ActorMovementType.Basic;
                 }
             }
         }
